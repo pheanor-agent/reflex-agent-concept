@@ -212,9 +212,9 @@
     });
     const toks = [['요청 이해', 1, 1], ['자료 찾기', 3, 0], ['실행', 2, .55], ['결과 확인', 3, .8]].map((d, i) => {
       const g = svg('g', {}, v);
-      const c = svg('circle', { r: 30, fill: C.l3 }, g);
-      const halo = svg('circle', { r: 30, fill: 'none', stroke: C.l3, 'stroke-width': 2 }, g);
-      const l = T(g, 0, 58, d[0], 'vl');
+      const c = svg('circle', { r: 24, fill: C.l3 }, g);
+      const halo = svg('circle', { r: 24, fill: 'none', stroke: C.l3, 'stroke-width': 2 }, g);
+      const l = T(g, 0, 50, d[0], 'vl');
       return { g, c, halo, l, x: 470 + i * 140, final: d[1], speed: d[2], main: i === 1 };
     });
     const colAt = lv => [C.l3, C.l2, C.l1, C.l0][Math.round(lv)];
@@ -226,11 +226,11 @@
         if (o.main) lv = 3 * ease(seg(p, .52, .72));
         else if (o.speed > 0) lv = o.final * ease(seg(p, .76, .76 + .22 * o.speed));
         else lv = o.final * ease(seg(p, .52, .72));
-        const y = BY(lv) + 48;
+        const y = BY(lv) + 34;
         o.g.setAttribute('transform', `translate(${o.x},${y.toFixed(1)})`);
         o.c.setAttribute('fill', colAt(lv)); o.halo.setAttribute('stroke', colAt(lv));
         const think = lv < .5 ? 1 : 0;
-        o.halo.setAttribute('r', 30 + think * (8 + 6 * Math.sin(t / 160 + o.x)));
+        o.halo.setAttribute('r', 24 + think * (7 + 5 * Math.sin(t / 160 + o.x)));
         op(o.halo, think * .7);
         if (!o.main && p < .76) op(o.g, a * (p > .5 ? .35 : 1));
       });
@@ -353,19 +353,29 @@
 
   (function scenes() {
     document.querySelectorAll('.cap').forEach(c => { c.innerHTML = `<span>${c.innerHTML}</span>`; });
-    const list = [...document.querySelectorAll('.scene')].map(sc => ({ sc, caps: [...sc.querySelectorAll('.cap')], fn: VIS[sc.id] }));
+    const list = [...document.querySelectorAll('.scene')].map(sc => ({ sc, caps: [...sc.querySelectorAll('.cap')], fn: VIS[sc.id], dur: (+sc.dataset.dur || 10) * 1000, vis: sc.querySelector('.vis'), capBox: sc.querySelector('.caps'), start: 0, on: false }));
     const dots = $('dots');
-    list.forEach(o => { const a = el('a', '', '', dots); a.href = '#' + o.sc.id; a.title = o.sc.dataset.label; a.setAttribute('aria-label', o.sc.dataset.label); o.dot = a; });
+    list.forEach(o => {
+      const a = el('a', '', '', dots); a.href = '#' + o.sc.id; a.title = o.sc.dataset.label; a.setAttribute('aria-label', o.sc.dataset.label); o.dot = a;
+      new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting && !o.on) { o.on = true; o.start = performance.now(); }
+        else if (!e.isIntersecting) o.on = false;
+      }), { threshold: .35 }).observe(o.sc);
+      if (RM) { o.fn(1, 0); o.caps.forEach((c, i) => c.classList.toggle('on', i === o.caps.length - 1)); }
+    });
+    const HOLD = .84, FADE_OUT = .94, FADE_IN = .03;
     function frame(t) {
       list.forEach(o => {
         const r = o.sc.getBoundingClientRect();
-        const p = clamp(-r.top / Math.max(1, r.height - innerHeight), 0, 1);
-        const vis = r.bottom > 0 && r.top < innerHeight;
         o.dot.classList.toggle('on', r.top <= innerHeight * .5 && r.bottom > innerHeight * .5);
-        o.dot.style.setProperty('--p', p);
-        if (!vis) return;
+        if (!o.on || RM) return;
+        const u = ((t - o.start) % o.dur) / o.dur;           // 0→1 each loop
+        const p = clamp(u / HOLD, 0, 1);                      // play, then hold the last frame
+        const a = u < FADE_IN ? u / FADE_IN : u > FADE_OUT ? 1 - (u - FADE_OUT) / (1 - FADE_OUT) : 1;
+        o.vis.style.opacity = a.toFixed(3); o.capBox.style.opacity = a.toFixed(3);
+        o.dot.style.setProperty('--p', u);
         o.caps.forEach(c => c.classList.toggle('on', p >= +c.dataset.from && p < +c.dataset.to));
-        o.fn(p, RM ? 0 : t);
+        o.fn(p, t);
       });
       requestAnimationFrame(frame);
     }
