@@ -251,3 +251,18 @@ h3{font-size:1.15rem;margin:.2em 0 .4em;line-height:1.4}
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   .rv{opacity:1!important;transform:none!important}
 }
+
+/* ── simplified concept page additions ── */
+.lanes{margin-top:36px;display:grid;gap:14px;padding:26px;border:1px solid var(--line);border-radius:var(--radius);background:var(--night-2)}
+.lane-row{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:16px}
+.lane-name{font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+.lane-row:nth-child(2) .lane-name{color:var(--mint)}
+.lane-track{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.lane-cell{height:34px;border-radius:8px;background:var(--panel);overflow:hidden}
+.lane-cell i{display:block;height:100%;width:0;border-radius:8px}
+.lane-axis{display:flex;justify-content:space-between;margin-left:106px;font-family:var(--mono);font-size:.75rem;color:var(--dim)}
+@media(max-width:700px){.lane-row{grid-template-columns:60px 1fr;gap:8px}.lane-track{gap:5px}.lane-axis{margin-left:68px}}
+.road.road3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.road.road3{grid-template-columns:1fr}}
+#idea .matrix{grid-template-columns:140px repeat(4,1fr);max-width:900px}
+@media(max-width:700px){#idea .matrix{grid-template-columns:86px repeat(4,1fr)}}

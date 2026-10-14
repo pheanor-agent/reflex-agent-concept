@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>REFLEX v3 — 처음엔 생각하고, 익숙해지면 반사로 처리한다</title>
-  <meta name="description" content="REFLEX v3는 v2의 구상을 Hermes 위에서 돌아가는 하네스로 구현한 실험 릴리스입니다. 예산·효과·성공 판정은 호스트가 맡고, 반복 경험으로 줄인 판단 경로도 같은 방식으로 검증합니다.">
+  <meta name="description" content="REFLEX는 같은 일을 매번 처음처럼 생각하지 않는 에이전트입니다. 익숙해진 판단은 더 가벼운 처리로 내려보내고, 성공 판정은 모델 밖에서 합니다.">
   <meta name="color-scheme" content="dark">
   <link rel="stylesheet" href="assets/styles.css">
 </head>
@@ -16,299 +16,151 @@
     <div class="wrap">
       <a class="brand" href="#top"><i>r</i>REFLEX</a>
       <nav class="toplinks" aria-label="주요 이동">
-        <a href="#court">호스트</a><a href="#journey">요청의 여정</a><a href="#learning">학습</a><a href="#honest">현재 위치</a>
+        <a href="#problem">문제</a><a href="#idea">아이디어</a><a href="#trust">신뢰</a><a href="#now">현재 위치</a>
       </nav>
       <nav class="ver" aria-label="버전"><b>v3</b><a href="../v2/index.html">v2</a><a href="../v1/index.html">v1</a></nav>
     </div>
   </header>
 
   <main id="main">
-  <!-- ───────── HERO ───────── -->
   <section class="hero" id="top">
     <canvas id="connectome" aria-hidden="true"></canvas>
     <div class="wrap">
-      <span class="eyebrow">REFLEX v3 · 실험 하네스 0.3.0b14</span>
+      <span class="eyebrow">REFLEX v3 · 실험 단계</span>
       <h1 id="heroTitle" data-split>처음엔 생각하고, 익숙해지면 <em>반사로</em> 처리한다</h1>
-      <p class="lead">v2에서 구상한 적응형 에이전트를 Hermes 위에서 돌아가는 하네스로 구현했습니다. 모델이 무엇을 하겠다고 답하든 <b>예산·효과·성공 판정은 호스트가 맡습니다.</b> 그래서 반복 경험으로 판단 경로를 줄인 뒤에도 결과를 같은 기준으로 검증할 수 있습니다.</p>
+      <p class="lead">사람은 처음 하는 일은 곰곰이 생각하지만, 익숙한 일은 거의 반사적으로 합니다. REFLEX는 에이전트도 그렇게 일하게 만드는 프로젝트입니다. v3에서는 이 구상을 실제로 돌아가는 하네스로 만들었습니다.</p>
       <div class="hero-meta">
-        <span class="chip"><span class="dot"></span><b>18</b> 릴리스 · 나흘</span>
-        <span class="chip"><b>11</b> 의미 단위 × L3–L0</span>
-        <span class="chip"><b>1,074</b> 회귀 시험 통과</span>
-        <span class="chip">실제 업무 성능은 <b>검증 중</b></span>
+        <span class="chip"><span class="dot"></span>Hermes 위에서 동작</span>
+        <span class="chip">실제 업무 성능은 <b>측정 전</b></span>
       </div>
     </div>
     <div class="hero-legend" aria-hidden="true">
-      <div class="mode" id="heroMode">경로 · <b>L3 숙고</b></div>
-      <div id="heroHops">신호가 지나는 연결 9</div>
-      <div>배경은 개념 시각화입니다</div>
+      <div class="mode" id="heroMode">경로 · <b>깊은 생각</b></div>
+      <div>개념 그림</div>
     </div>
     <div class="scroll-cue" aria-hidden="true"></div>
   </section>
 
-  <!-- ───────── 01 v2 → v3 ───────── -->
-  <section class="s" id="shift">
+  <!-- 1 PROBLEM -->
+  <section class="s" id="problem">
     <div class="wrap">
-      <div class="kicker rv"><b>01</b> From concept to contract</div>
-      <h2 class="rv">구상이 실행 계약이 되었다</h2>
-      <p class="lead rv">v2는 익숙한 일을 짧게 처리하는 에이전트를 구상했습니다. v3에서는 그 구상의 항목마다 코드가 지키는 계약을 만들었습니다. 아래 버튼으로 같은 항목의 구상과 구현을 번갈아 볼 수 있습니다.</p>
-      <div class="toggle rv" role="group" aria-label="보기 전환">
-        <button type="button" data-mode="v2" aria-pressed="false">v2 · 구상</button>
-        <button type="button" data-mode="v3" aria-pressed="true">v3 · 구현</button>
+      <div class="kicker rv"><b>01</b> The problem</div>
+      <h2 class="rv">지금의 에이전트는 같은 일을 매번 처음처럼 생각한다</h2>
+      <p class="lead rv">어제 했던 보고서 정리를 오늘 다시 시켜도, 에이전트는 가장 큰 모델로 처음부터 고민합니다. 시간과 비용이 매번 똑같이 듭니다. REFLEX는 반복될수록 처리가 짧아지게 합니다.</p>
+      <div class="lanes rv" id="lanes">
+        <div class="lane-row"><span class="lane-name">지금</span><div class="lane-track" data-kind="flat"></div></div>
+        <div class="lane-row"><span class="lane-name">REFLEX</span><div class="lane-track" data-kind="reflex"></div></div>
+        <div class="lane-axis"><span>같은 요청 1회차</span><span>5회차 →</span></div>
       </div>
-      <div class="pairs" id="pairs" data-mode="v3"></div>
+      <p class="small rv">개념 그림입니다. 막대 길이는 한 번 처리하는 데 드는 시간과 비용을 뜻합니다.</p>
     </div>
   </section>
 
-  <!-- ───────── 02 COURT ───────── -->
-  <section class="s" id="court">
+  <!-- 2 IDEA -->
+  <section class="s" id="idea">
     <div class="wrap">
-      <div class="kicker rv"><b>02</b> The host decides</div>
-      <h2 class="rv">모델은 제안하고, 호스트가 판정한다</h2>
-      <p class="lead rv">Reflex는 모델이 작업을 끝냈다고 답해도 그 답을 성공의 근거로 쓰지 않습니다. 키와 예산, 효과 기록, 정지, 결과 판정은 모델 바깥의 호스트(controller)가 맡습니다.</p>
+      <div class="kicker rv"><b>02</b> The idea</div>
+      <h2 class="rv">익숙해진 판단은 더 가벼운 처리로 내려보낸다</h2>
+      <p class="lead rv">처리 방식을 네 단계로 나눕니다. 처음 보는 일은 큰 모델이 깊게 생각하고, 익숙해지면 작은 모델, 정해진 선택표, 코드 순으로 내려갑니다. 한 작업 안에서도 판단마다 내려가는 속도가 다릅니다. 아래 막대를 움직여 보세요.</p>
+      <div class="scrub rv">
+        <label for="exp" class="mono small">경험</label>
+        <input type="range" id="exp" min="0" max="100" value="0">
+        <output id="expOut">처음 하는 일</output>
+      </div>
+      <div class="matrix rv" id="matrix" role="table" aria-label="판단별 처리 단계"></div>
+      <p class="small rv">개념 그림입니다. 실제로 언제 내려갈지는 판단마다 따로 시험해서 정합니다.</p>
+    </div>
+  </section>
+
+  <!-- 3 TRUST -->
+  <section class="s" id="trust">
+    <div class="wrap">
+      <div class="kicker rv"><b>03</b> Why it can be trusted</div>
+      <h2 class="rv">가벼워져도 믿을 수 있게, 성공 판정은 모델 밖에서 한다</h2>
+      <p class="lead rv">처리를 가볍게 바꾸면 실수가 숨어들 수 있습니다. 그래서 모델은 일을 제안하고 수행만 합니다. 쓸 수 있는 예산, 손댈 수 있는 범위, 일이 제대로 끝났는지의 판단은 모델 바깥의 호스트가 맡습니다.</p>
       <div class="court">
         <svg id="orbit" viewBox="0 0 520 520" role="img" aria-labelledby="orbitT">
-          <title id="orbitT">바깥의 모델들이 제안을 보내고, 가운데 호스트가 소유한 여섯 가지 권한을 거쳐 승인 또는 거절되는 모습</title>
-          <defs>
-            <radialGradient id="coreG"><stop offset="0" stop-color="#7fd8b0" stop-opacity=".35"/><stop offset="1" stop-color="#7fd8b0" stop-opacity="0"/></radialGradient>
-          </defs>
+          <title id="orbitT">바깥의 모델들이 제안을 보내고, 가운데 호스트가 예산·범위·판정을 거쳐 받아들이거나 거절하는 모습</title>
+          <defs><radialGradient id="coreG"><stop offset="0" stop-color="#7fd8b0" stop-opacity=".35"/><stop offset="1" stop-color="#7fd8b0" stop-opacity="0"/></radialGradient></defs>
           <circle cx="260" cy="260" r="235" fill="none" stroke="#2a423a" stroke-dasharray="2 6"/>
           <circle cx="260" cy="260" r="150" fill="none" stroke="#3a5a50"/>
           <circle cx="260" cy="260" r="110" fill="url(#coreG)"/>
-          <g id="orbitRing"></g>
-          <g id="orbitProps"></g>
+          <g id="orbitRing"></g><g id="orbitProps"></g>
           <circle cx="260" cy="260" r="62" fill="#14241f" stroke="#7fd8b0" stroke-width="1.5"/>
-          <text x="260" y="254" text-anchor="middle" class="svg-title">호스트</text>
-          <text x="260" y="274" text-anchor="middle" class="svg-label">CONTROLLER</text>
+          <text x="260" y="266" text-anchor="middle" class="svg-title">호스트</text>
           <g id="orbitModels"></g>
         </svg>
         <div class="ownlist" id="ownlist"></div>
       </div>
-      <p class="callout mint rv">모델의 완료 문구는 기록에 <code class="mono">unverified</code>로 남습니다. 성공 여부는 호스트의 독립 판정과 체크포인트로 정합니다. 계층을 내려 처리 비용을 줄이는 일도 이 판정을 통과해야 합니다.</p>
     </div>
   </section>
 
-  <!-- ───────── 03 JOURNEY (sticky scrollytelling) ───────── -->
-  <section class="s" id="journey">
+  <!-- 4 SAFETY -->
+  <section class="s" id="safety">
     <div class="wrap">
-      <div class="kicker rv"><b>03</b> One request, eight gates</div>
-      <h2 class="rv">요청 하나가 결과가 되기까지 여덟 단계를 거친다</h2>
-      <p class="lead rv">“아까 작업 이어서 마무리해줘”라는 요청이 결과가 되고, 다음 판단에 쓸 경험으로 남기까지의 과정입니다. 스크롤을 내리면 단계가 하나씩 진행됩니다.</p>
-      <div class="story">
-        <div class="stage">
-          <svg id="journeySvg" viewBox="0 0 460 640" aria-hidden="true">
-            <defs>
-              <linearGradient id="litGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff8a5c"/><stop offset=".5" stop-color="#e9c46a"/><stop offset="1" stop-color="#7fd8b0"/></linearGradient>
-              <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <path id="jTrack" class="track" d=""/>
-            <path id="jLit" class="track-lit" d=""/>
-            <g id="jNodes"></g>
-            <circle id="jPacket" r="8" fill="#ff8a5c" filter="url(#glow)"/>
-          </svg>
-        </div>
-        <div class="steps" id="steps">
-          <article class="step" data-step="0"><span class="no">GATE 01 · 대화</span><h3>말로 시작한다</h3><p>사용자는 plan JSON이나 Run ID를 만들지 않습니다. “진행 상황 알려줘”, “이 작업 그만해”, “아까 작업 이어서 마무리해줘”처럼 말하면 됩니다. 요청은 세션 원장에 먼저 기록되고, 작업 흐름과 상태 확인·중단을 받는 입구가 따로 열립니다.</p><p class="small">ChatService · SessionRepository</p></article>
-          <article class="step" data-step="1"><span class="no">GATE 02 · 고정</span><h3>시작 전에 조건을 모두 고정한다</h3><p>의도를 해석하기 전에 입력, 지식 범위, 권한, 예산, 모델, 코드, 학습된 구조 묶음 전체를 하나의 admission으로 고정합니다. 실행 도중 정책이 슬쩍 바뀌는 일은 없습니다.</p><p class="small">admission · bundle pin</p></article>
-          <article class="step" data-step="2"><span class="no">GATE 03 · 의도 계약</span><h3>모델은 정해진 의도 계약으로만 답한다</h3><p>모델은 정해진 intent 스키마에 맞춰 답합니다. 원 요청에 들어 있던 읽기·쓰기·실행 의무(파일 좌표, 실행할 시험, 출력 위치)가 데이터로 끝까지 전달되고, 빠진 의무는 한 곳에서 판정됩니다.</p><p class="small"><code>intent_contract</code> · completion/2</p></article>
-          <article class="step" data-step="3"><span class="no">GATE 04 · 계층 선택</span><h3>판단마다 맞는 계층을 고른다</h3><p>적격성 검사를 통과한 경로만 후보가 됩니다. 낯선 일은 격리된 L3 에이전트가, 익숙한 해석은 L2 모델이 맡습니다. 선택지가 정해진 판단은 L1 선택표로, 검토를 마친 절차는 L0 코드로 처리합니다. 어느 계층이든 같은 실행기와 효과 통로를 씁니다.</p><p class="small">route · select · Decision</p></article>
-          <article class="step" data-step="4"><span class="no">GATE 05 · 격리 실행</span><h3>Run마다 격리된 방을 따로 만든다</h3><p>네이티브 실행은 Run마다 새 bubblewrap 방에서 돌아갑니다. 쓸 수 있는 곳은 그 Run의 <code>/work</code>뿐이고, 외부 네트워크는 막혀 있으며, 진짜 API 키 대신 그 Run 전용 capability만 받습니다. 모든 모델 호출은 보내기 전에 예산에서 먼저 차감됩니다.</p><p class="small">native sandbox · attempt reservation</p></article>
-          <article class="step" data-step="5"><span class="no">GATE 06 · 독립 검증</span><h3>결과 판정은 실행과 분리한다</h3><p>파일 존재·내용·SHA-256 같은 관측 가능한 조건, 그리고 원 요청의 시험이 실제로 실행됐다는 영수증으로 판정합니다. 실패하거나 효과가 불확실하면 성공으로 추정하지 않고 멈춰 둡니다.</p><p class="small">host acceptance · completion receipt</p></article>
-          <article class="step" data-step="6"><span class="no">GATE 07 · 체크포인트</span><h3>검증된 단계만 체크포인트가 된다</h3><p>단계마다 파일 해시와 계약 지문이 남습니다. 프로세스가 죽어도 다시 열 때 이전 체크포인트를 전부 재확인하고, 누락·변조·계약 변화가 보이면 자동 재실행 대신 검토 상태로 둡니다.</p><p class="small">Goal checkpoint · needs_review</p></article>
-          <article class="step" data-step="7"><span class="no">GATE 08 · 경험</span><h3>끝난 일은 다음 판단의 재료가 된다</h3><p>완료된 Goal은 독립 판정·출처·비용이 붙은 에피소드가 됩니다. 에피소드는 학습용·선택용·봉인 평가용으로 나눠 저장하고, 이 기록에서 다음 요청을 더 짧게 처리할 후보를 만듭니다.</p><p class="small">episode · train / selection / sealed</p></article>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────── 04 SANDBOX ───────── -->
-  <section class="s" id="sandbox">
-    <div class="wrap sandbox-wrap">
-      <div>
-        <div class="kicker rv"><b>04</b> Bounded by construction</div>
-        <h2 class="rv">격리 경계는 실행 구조에 들어 있다</h2>
-        <p class="lead rv">격리 환경을 만들 수 없으면 실행을 거절하며, 격리 없이 실행하는 대체 경로는 두지 않았습니다. 아래 버튼으로 방 안의 에이전트가 할 수 있는 일과 막히는 일을 확인할 수 있습니다.</p>
-        <div class="toggle rv" role="group" aria-label="시도 선택" id="sbButtons" style="flex-wrap:wrap;border-radius:16px">
-          <button type="button" data-act="call" aria-pressed="false">모델 호출</button>
-          <button type="button" data-act="net" aria-pressed="false">외부 접속</button>
-          <button type="button" data-act="peek" aria-pressed="false">다른 Run 읽기</button>
-          <button type="button" data-act="write" aria-pressed="false">/work 쓰기</button>
-        </div>
-        <div class="budget rv">
-          <div class="row"><span>Goal 시도 예산</span><b id="budgetN">24 / 24</b></div>
-          <div class="bar"><i id="budgetBar"></i></div>
-          <div class="log" id="sbLog" aria-live="polite"></div>
-        </div>
-        <p class="small rv">예산 24회는 설치 안내의 예시 값입니다. 차감은 전송 전에 SQLite에서 원자적으로 일어나며, 오류·취소·늦은 응답도 환불하지 않습니다.</p>
-      </div>
-      <svg id="room" viewBox="0 0 480 440" role="img" aria-labelledby="roomT">
-        <title id="roomT">호스트 안에 격리된 실행 방. 방 안에서는 /work만 쓸 수 있고 입력과 지식은 읽기 전용이며 네트워크는 막혀 있다.</title>
-        <rect x="10" y="10" width="460" height="420" rx="22" fill="#101d1a" stroke="#2a423a"/>
-        <text x="30" y="38" class="svg-label">HOST · 키 · 원장 · 예산</text>
-        <rect x="70" y="80" width="340" height="280" rx="18" fill="#0b1412" stroke="#7fd8b0" stroke-width="1.5" stroke-dasharray="6 5" id="roomWall"/>
-        <text x="90" y="106" class="svg-label">bwrap · PID / user / net / mount namespace</text>
-        <rect x="100" y="130" width="130" height="80" rx="12" fill="#173229" stroke="#3fae84"/><text x="165" y="168" text-anchor="middle" class="svg-title">/work</text><text x="165" y="188" text-anchor="middle" class="svg-label">쓰기 가능 · 이 Run만</text>
-        <rect x="244" y="130" width="150" height="36" rx="10" fill="#14241f" stroke="#3a5a50"/><text x="319" y="153" text-anchor="middle" class="svg-label">/inputs · 읽기 전용</text>
-        <rect x="244" y="174" width="150" height="36" rx="10" fill="#14241f" stroke="#3a5a50"/><text x="319" y="197" text-anchor="middle" class="svg-label">/knowledge · 읽기 전용</text>
-        <circle id="agentDot" cx="240" cy="280" r="18" fill="#ff8a5c"/><text x="240" y="318" text-anchor="middle" class="svg-label">에이전트</text>
-        <rect x="190" y="388" width="100" height="30" rx="8" fill="#14241f" stroke="#e9c46a"/><text x="240" y="408" text-anchor="middle" class="svg-label">IPC · capability</text>
-        <line x1="240" y1="298" x2="240" y2="388" stroke="#e9c46a" stroke-dasharray="3 4" id="ipcLine"/>
-        <g id="netX" opacity=".25"><text x="440" y="300" text-anchor="middle" class="svg-label">인터넷</text><line x1="414" y1="270" x2="462" y2="270" stroke="#ff6b6b" stroke-width="2"/><path d="M431 262 l14 16 M445 262 l-14 16" stroke="#ff6b6b" stroke-width="2.5"/></g>
-        <g id="peekX" opacity=".25"><rect x="20" y="230" width="36" height="60" rx="6" fill="none" stroke="#64786f" stroke-dasharray="3 3"/><text x="38" y="306" text-anchor="middle" class="svg-label">이전 Run</text></g>
-        <path id="sbPath" d="" fill="none" stroke="#e9c46a" stroke-width="2"/>
-      </svg>
-    </div>
-  </section>
-
-  <!-- ───────── 05 DURABLE ───────── -->
-  <section class="s" id="durable">
-    <div class="wrap">
-      <div class="kicker rv"><b>05</b> Durable goals</div>
-      <h2 class="rv">끊겨도 처음부터 다시 하지 않는다</h2>
-      <p class="lead rv">오래 걸리는 작업은 중간에 끊길 수 있습니다. Reflex의 Goal은 원 요청과 단계, 예산, 만료 시각을 SQLite에 저장합니다. 아래 애니메이션은 세 번째 단계에서 프로세스가 죽은 뒤, 새 프로세스가 체크포인트를 재확인하고 남은 단계만 이어가는 과정입니다.</p>
-      <div class="durable rv" id="durableBox">
-        <div class="lane"><div class="rail"></div><div id="cps"></div><div class="runner" id="runner"></div></div>
-        <div class="crash" id="crash">PROCESS LOST</div>
-        <div class="dstate" id="dstate"><span data-s="running">running</span><span data-s="lost">process lost</span><span data-s="recheck">checkpoint 재확인</span><span data-s="continue">continue</span><span data-s="succeeded">succeeded</span></div>
-      </div>
-      <div class="grid g3" style="margin-top:22px">
-        <div class="card rv" style="--d:0"><span class="tag">stop latch</span><h3>정지 요청은 이어가기로 풀리지 않는다</h3><p>“그만해”로 건 정지는 Goal에 기록으로 남습니다. 이어서 하라는 요청이 와도 이 정지를 자동으로 해제하지 않습니다.</p></div>
-        <div class="card rv" style="--d:1"><span class="tag">unknown effect</span><h3>효과를 모르면 성공으로 기록하지 않는다</h3><p>중간에 끊겨 효과가 불확실한 Run은 관측된 파일·영수증과 대조해 따로 정리합니다. 원 Run은 고치지 않습니다.</p></div>
-        <div class="card rv" style="--d:2"><span class="tag">installed check</span><h3>설치본에서도 같은 동작</h3><p>b14 설치본의 오프라인 Goal은 1/2단계 뒤 일시정지, 이어가기 뒤 두 단계 검증과 성공으로 끝났습니다.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────── 06 SEMANTIC UNITS ───────── -->
-  <section class="s" id="learning">
-    <div class="wrap">
-      <div class="kicker rv"><b>06</b> Eleven judgments, four depths</div>
-      <h2 class="rv">한 작업 안에서도 판단마다 계층이 따로 내려간다</h2>
-      <p class="lead rv">v2는 판단 단계마다 계층을 고르자고 제안했습니다. v3는 그 판단 단계를 코드의 열한 개 의미 단위로 정하고, 단위마다 경험을 따로 쌓습니다. 요청 해석이 L3에 남아 있는 동안에도 해시 검증은 먼저 L0로 내려갈 수 있습니다.</p>
-      <div class="scrub rv">
-        <label for="exp" class="mono small">검증된 경험</label>
-        <input type="range" id="exp" min="0" max="100" value="0" aria-describedby="expOut">
-        <output id="expOut">0 · 처음 보는 일</output>
-      </div>
-      <div class="matrix rv" id="matrix" role="table" aria-label="의미 단위별 처리 계층"></div>
-      <div class="costline rv" id="costline" aria-hidden="true"></div>
-      <p class="small rv">위 행렬은 <b>개념 시뮬레이션</b>입니다. 실제 하강 순서와 시점은 단위별 독립 평가가 정합니다. 단위 이름은 코드의 operation 목록 그대로입니다.</p>
-      <div class="grid g2" style="margin-top:34px">
-        <div class="card glow rv"><span class="tag">실측 · 통계 업무</span><h3>새 입력을 모델 호출 0회로</h3><p>통계 절차를 검증된 실행 경험과 연결한 뒤, 학습에 쓰지 않은 새 입력을 고성능·저비용 두 모델 설정 모두에서 <b>L0, 모델 0회·워커 0회, 236.6 ms / 233.2 ms</b>로 처리했고 답도 맞았습니다.</p><p class="small">단, 호스트가 미리 작성한 통계 절차를 연결한 결과이며 임의 코드를 새로 배운 것은 아닙니다.</p></div>
-        <div class="card rv"><span class="tag">원칙</span><h3>숙련은 권한을 늘리지 않는다</h3><p>단위가 L0로 내려가도 쓸 수 있는 파일, 부를 수 있는 도구, 쓸 수 있는 예산은 그대로입니다. 권한 상한은 작업을 시작할 때 admission에서 정해지고, 경험이 쌓여도 넓어지지 않습니다.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────── 07 LIFECYCLE ───────── -->
-  <section class="s" id="lifecycle">
-    <div class="wrap">
-      <div class="kicker rv"><b>07</b> Promote slowly, roll back at once</div>
-      <h2 class="rv">채택은 여러 단계를 거치고, 복귀는 묶음 전체를 한 번에 되돌린다</h2>
-      <p class="lead rv">짧은 경로를 쓰려면 먼저 후보 조건을 갖춰야 합니다. 서로 다른 입력에서 나온 깨끗한 성공 사례 두 건, 효과가 확인된 실행, 고정된 검증 방법, 독립 평가가 모두 필요합니다. 그다음 봉인된 평가를 통과한 묶음만 명시적으로 채택합니다. 문제가 생기면 묶음 전체를 이전 버전으로 되돌립니다.</p>
+      <div class="kicker rv"><b>04</b> Learn carefully</div>
+      <h2 class="rv">검증된 방법만 쓰고, 문제가 생기면 바로 되돌린다</h2>
+      <p class="lead rv">반복에서 찾은 지름길은 바로 쓰지 않습니다. 실제 일에 영향을 주지 않는 곳에서 먼저 시험하고, 통과한 것만 채택합니다. 채택한 뒤에 문제가 보이면 이전 방법으로 되돌립니다.</p>
       <div class="life rv">
-        <svg id="lifeSvg" viewBox="0 0 1100 300" role="img" aria-labelledby="lifeT">
-          <title id="lifeT">경험에서 후보, 그림자 실행, 봉인 평가, 명시 채택, 활성으로 이어지는 승격 경로와 실패 시 격리·전체 복귀 경로</title>
+        <svg id="lifeSvg" viewBox="0 0 900 260" role="img" aria-labelledby="lifeT">
+          <title id="lifeT">경험에서 후보를 만들고, 따로 시험한 뒤 채택하며, 실패하면 이전 방법을 유지하거나 되돌리는 흐름</title>
           <defs><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#3a5a50"/></marker></defs>
           <g id="lifeG"></g>
-          <circle id="lifeChip" r="9" fill="#e9c46a"/>
+          <circle id="lifeChip" r="10" fill="#e9c46a"/>
         </svg>
       </div>
-      <div class="grid g3">
-        <div class="card rv" style="--d:0"><span class="tag">source-backed</span><h3>교훈에는 출처가 붙는다</h3><p>일반 교훈 후보에는 근거 파일의 위치와 해시가 함께 저장됩니다. 채택·사용·복귀 기록도 같은 원장에 남습니다.</p></div>
-        <div class="card rv" style="--d:1"><span class="tag">pair</span><h3>실행과 검증은 짝으로 움직인다</h3><p>실행 후보와 검증 후보를 각각 활성화하는 우회는 없습니다. 같은 트랜잭션에서 짝을 짓고 봉인 평가 뒤에만 채택합니다.</p></div>
-        <div class="card rv" style="--d:2"><span class="tag">pin</span><h3>진행 중인 작업은 시작 때의 버전을 쓴다</h3><p>새 묶음은 새 admission부터 적용됩니다. 이미 시작된 작업의 구조는 바뀌지 않습니다.</p></div>
-      </div>
     </div>
   </section>
 
-  <!-- ───────── 08 OBSERVATION ───────── -->
-  <section class="s" id="observe">
+  <!-- 5 NOW -->
+  <section class="s" id="now">
     <div class="wrap">
-      <div class="kicker rv"><b>08</b> Watching before predicting</div>
-      <h2 class="rv">경로 예측은 아직 기록만 하고 판단에는 쓰지 않는다</h2>
-      <p class="lead rv">가장 최근에 추가한 것은 어떤 경로로 보내야 성공할지 미리 가늠하는 관측 장치입니다. 예측이 맞는다는 독립 근거가 쌓이기 전까지는 기록만 하고 경로 선택에 반영하지 않습니다(shadow mode).</p>
-      <div class="grid g4" style="margin-top:30px">
-        <div class="card rv" style="--d:0"><span class="tag">shadow predictor</span><h3>판단 전 정보만 쓴다</h3><p>역할·업무 계약·입력 형식처럼 결정 이전에 알 수 있는 특징만 씁니다. 사례 5개 미만은 “부족”, 그 이상도 보정 근거가 없으면 “신뢰 불가”로 표시합니다.</p></div>
-        <div class="card rv" style="--d:1"><span class="tag">context manifest</span><h3>모델이 본 것을 남긴다</h3><p>호출마다 프롬프트·도구의 지문, 근거 범위, 잘림 여부, 추정 토큰을 기록합니다. 원문은 복제하지 않습니다.</p></div>
-        <div class="card rv" style="--d:2"><span class="tag">episode search</span><h3>성공과 반례를 나눠 찾는다</h3><p>최근 5,000건 안에서 성공·반례·미분류를 범주별 최대 20건씩 돌려줍니다. 출처가 없으면 단순 관측으로만 취급합니다.</p></div>
-        <div class="card rv" style="--d:3"><span class="tag">sealed receipt</span><h3>채택 직전에 다시 대조한다</h3><p>짝 평가와 묶음 전체 평가가 PASS·FAIL·부족·미실행으로 따로 표시되고, 실제 봉인 영수증과 맞을 때만 채택됩니다.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────── 09 TIMELINE ───────── -->
-  <section class="s" id="timeline">
-    <div class="wrap">
-      <div class="kicker rv"><b>09</b> Iteration speed</div>
-      <h2 class="rv">나흘 동안 열여덟 번 고쳐 만들었다</h2>
-      <p class="lead rv">2026년 10월 7일 첫 알파부터 10일 b14까지입니다. 릴리스마다 실제 시험에서 나온 실패를 지우지 않고 기록했고, 그 기록을 다음 버전의 요구사항으로 삼았습니다.</p>
-      <div class="stats" id="stats">
-        <div class="stat rv" style="--d:0"><div class="n" data-count="18">0</div><div class="l">릴리스 (a1–a4, b1–b14)</div></div>
-        <div class="stat rv" style="--d:1"><div class="n" data-count="1074">0</div><div class="l">b13 소스 회귀 시험 통과, 실패 0</div></div>
-        <div class="stat rv" style="--d:2"><div class="n" data-count="18268">0</div><div class="l">줄의 Python 소스 (60개 파일)</div></div>
-        <div class="stat rv" style="--d:3"><div class="n" data-count="11">0</div><div class="l">의미 단위, 각각 L3–L0 선택</div></div>
-      </div>
-    </div>
-    <div class="timeline rv" id="tl" tabindex="0" aria-label="버전 타임라인, 가로로 스크롤">
-      <div class="tl-track" id="tlTrack"></div>
-    </div>
-    <div class="wrap"><span class="tl-hint">← 가로로 넘겨 보세요 →</span></div>
-  </section>
-
-  <!-- ───────── 10 HONEST ───────── -->
-  <section class="s" id="honest">
-    <div class="wrap">
-      <div class="kicker rv"><b>10</b> Where it actually stands</div>
-      <h2 class="rv">첫 실제 시험에서는 32건 중 10건이 통과했다</h2>
-      <p class="lead rv">b13 설치본을 실제 모델로 처음 돌리고 바닐라 Hermes와 비교한 32건의 결과입니다. 실패 기록은 덮어쓰지 않았고, b14의 수정 항목은 이 기록에서 나왔습니다.</p>
+      <div class="kicker rv"><b>05</b> Where it stands</div>
+      <h2 class="rv">지금은 바탕이 동작하는 단계이고, 빨라지는지는 아직 측정 전이다</h2>
+      <p class="lead rv">실제 모델로 처음 돌린 시험 32건 중 10건이 통과했습니다. 실패 기록은 그대로 남겨 다음 버전을 고치는 데 썼습니다.</p>
       <div class="score rv" id="score">
         <div class="bar">
-          <i style="--c:var(--mint);background:var(--mint)" data-w="10">10</i>
-          <i style="--c:var(--red);background:var(--red)" data-w="12">12</i>
-          <i style="--c:var(--gold);background:var(--gold)" data-w="9">9</i>
-          <i style="--c:var(--dim);background:var(--dim)" data-w="1">1</i>
+          <i style="background:var(--mint)" data-w="10">10</i>
+          <i style="background:var(--red)" data-w="12">12</i>
+          <i style="background:var(--gold)" data-w="9">9</i>
+          <i style="background:var(--dim)" data-w="1">1</i>
         </div>
-        <div class="legend"><span style="--c:var(--mint)">통과 10</span><span style="--c:var(--red)">실패 12</span><span style="--c:var(--gold)">선행 차단 9</span><span style="--c:var(--dim)">미확인 1</span></div>
+        <div class="legend"><span style="--c:var(--mint)">통과 10</span><span style="--c:var(--red)">실패 12</span><span style="--c:var(--gold)">사전 조건에서 막힘 9</span><span style="--c:var(--dim)">확인 못 함 1</span></div>
       </div>
       <div class="proof">
         <div class="card yes rv"><h3>확인한 것</h3><ul>
-          <li>격리 실행, 선차감 예산, 정지·만료가 설치본에서 동작한다</li>
-          <li>재시작 뒤 체크포인트를 재확인하고 남은 단계만 이어간다</li>
-          <li>학습된 후보가 실제로 고정·소비되고 복귀할 수 있다</li>
-          <li>제한된 통계 업무에서 새 입력을 모델 호출 없이 처리했다</li>
+          <li>예산·실행 범위·판정을 호스트가 통제하는 바탕이 동작한다</li>
+          <li>작업이 중간에 끊겨도 확인된 단계부터 이어간다</li>
+          <li>단순한 통계 업무에서는 익숙해진 뒤 모델 없이 처리했다</li>
         </ul></div>
-        <div class="card not rv"><h3>아직 증명하지 못한 것</h3><ul>
-          <li>일반·후속 업무 24개 중 통과는 3개다</li>
-          <li>세 비교군이 모두 통과한 학습 짝은 0/8, 비용 감소도 관측되지 않았다</li>
-          <li>코드 작업 4건이 실행 전 거절되었다 (b14에서 원인 보완, 재시험 전)</li>
-          <li>b14의 실제 업무 비교와 운영 Hermes 대체는 아직 실행 전이다</li>
+        <div class="card not rv"><h3>아직 모르는 것</h3><ul>
+          <li>일반 업무에서도 반복할수록 빨라지고 저렴해지는가</li>
+          <li>가벼워진 처리의 품질이 처음과 같게 유지되는가</li>
+          <li>지금 쓰는 Hermes를 대신할 수 있는가</li>
         </ul></div>
       </div>
-      <p class="callout rv">현재 단계에서 확인된 것은 하네스의 통제 장치가 설치본에서 동작한다는 점입니다. 학습으로 실제 업무가 빨라지고 저렴해지는지는 b14 실제 비교에서 확인할 차례입니다.</p>
     </div>
   </section>
 
-  <!-- ───────── 11 ROADMAP ───────── -->
+  <!-- 6 NEXT -->
   <section class="s" id="next">
     <div class="wrap">
-      <div class="kicker rv"><b>11</b> What comes next</div>
-      <h2 class="rv">다음 실험이 증명해야 할 것</h2>
-      <div class="road">
-        <div class="ph done rv" style="--d:0"><h3>통제 기반</h3><p>a1–b4. 원장, 독립 검증, 격리 실행, 선차감 예산, 재시작, 예약 실행을 만들었습니다.</p></div>
-        <div class="ph done rv" style="--d:1"><h3>학습 연결</h3><p>b5–b14. 의미 단위 학습, 출처가 붙은 교훈, 실행·검증 짝 채택, 묶음 복귀를 붙였습니다.</p></div>
-        <div class="ph now rv" style="--d:2"><h3>실제 업무 비교</h3><p>관측 장치를 붙인 b14로 실제 모델 업무 비교를 다시 합니다. 확인할 것은 같은 품질에서 호출 수와 시간이 줄어드는지입니다.</p></div>
-        <div class="ph rv" style="--d:3"><h3>운영 전환 판단</h3><p>비교 결과가 기준을 넘을 때만 Hermes 운영 경로를 Reflex로 옮깁니다. 전환도 버전별 설치와 복귀를 전제로 합니다.</p></div>
+      <div class="kicker rv"><b>06</b> What comes next</div>
+      <h2 class="rv">다음은 실제 업무에서 빨라지는지 확인하는 것이다</h2>
+      <div class="road road3">
+        <div class="ph done rv" style="--d:0"><h3>믿을 수 있는 바탕</h3><p>모델 밖에서 예산·범위·판정을 통제하는 하네스를 만들었습니다.</p></div>
+        <div class="ph now rv" style="--d:1"><h3>실제 업무 비교</h3><p>같은 업무를 반복시켜 품질은 그대로인 채 시간과 비용이 줄어드는지 잽니다.</p></div>
+        <div class="ph rv" style="--d:2"><h3>운영 전환</h3><p>비교 결과가 기준을 넘으면 지금 쓰는 Hermes를 REFLEX로 옮깁니다.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ───────── CLOSING ───────── -->
   <section class="closing" id="closing">
     <canvas id="closingCanvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <span class="eyebrow">REFLEX</span>
-      <h2 class="rv">검증을 통과한 경로만 빨라진다</h2>
-      <p class="lead rv">v1은 판단 계층을, v2는 모듈 연결과 구조 진화를 구상했습니다. v3는 그 구상을 검증할 수 있는 실행 기반을 만들었습니다. 다음 실험에서는 이 기반 위에서 실제 업무 처리가 빨라지는지 측정합니다.</p>
+      <h2 class="rv">깊은 생각은 새로운 일에 쓰고, 익숙한 일은 반사로</h2>
+      <p class="lead rv">v1은 판단을 네 단계로 나누는 구상을, v2는 지식과 연결 구조가 함께 자라는 구상을 담았습니다. v3는 그 구상을 시험할 수 있는 하네스입니다.</p>
       <div class="links rv">
         <a class="btn primary" href="../v2/index.html">v2 · 행동과 구조의 진화</a>
         <a class="btn" href="../v1/index.html">v1 · 원본 구상</a>
@@ -318,7 +170,7 @@
   </section>
   </main>
 
-  <footer class="footer"><div class="wrap"><span>REFLEX / 검증 가능한 적응형 하네스</span><span>PROJECT NOTEBOOK / v3 · 2026.10</span></div></footer>
+  <footer class="footer"><div class="wrap"><span>REFLEX / 익숙해질수록 가벼워지는 에이전트</span><span>PROJECT NOTEBOOK / v3 · 2026.10</span></div></footer>
   <script src="assets/motion.js" defer></script>
 </body>
 </html>

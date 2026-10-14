@@ -100,7 +100,7 @@
       for (let i = 1; i < p.length; i++) { const a = nodes[p[i - 1]], b = nodes[p[i]]; const d = Math.hypot(a.x - b.x, a.y - b.y); segs.push({ a, b, d, s: total }); total += d; }
       pulse = { segs, total, t: performance.now(), dur: total / (mode ? 0.62 : 0.42), trail: [] };
       const hm = $('heroMode'), hh = $('heroHops');
-      if (hm) hm.innerHTML = mode ? '경로 · <b class="fast">L0 반사</b>' : '경로 · <b>L3 숙고</b>';
+      if (hm) hm.innerHTML = mode ? '경로 · <b class="fast">반사</b>' : '경로 · <b>깊은 생각</b>';
       if (hh) hh.textContent = `신호가 지나는 연결 ${p.length - 1}`;
     }
     function frame(now) {
@@ -109,7 +109,7 @@
       const t = (now - t0) / 1000;
       // strata labels
       ctx.font = '11px ui-monospace, monospace'; ctx.textAlign = 'right';
-      ['L0 실행', 'L1 결정', 'L2 숙련', 'L3 숙고'].forEach((s, k) => { ctx.fillStyle = LC[k] + '55'; ctx.fillText(s, W - 14, bandY(k) - H * 0.07); });
+      ['코드로 바로 실행', '정해진 선택', '작은 모델', '큰 모델 · 깊은 생각'].forEach((s, k) => { ctx.fillStyle = LC[k] + '55'; ctx.fillText(s, W - 14, bandY(k) - H * 0.07); });
       // edges
       edges.forEach(([a, b, onPath]) => {
         const A = nodes[a], B = nodes[b];
@@ -156,57 +156,25 @@
     new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv);
   })();
 
-  /* ── 01: v2 vs v3 pairs with View Transitions ── */
-  (function pairs() {
-    const rows = [
-      ['계층', '작업과 판단 단계마다 L3–L0 중 하나를 고른다', '판단 단계를 열한 개 의미 단위로 정하고 단위마다 L3–L0를 고른다', 'interpret · plan_consistency · retrieve · read_knowledge · route · execute · verify · recover · extract · evaluate · select'],
-      ['공통 실행기', '모든 계층이 같은 권한·예산·도구 계약을 쓴다', '호스트가 키·전송·예산·정지를 소유하고 모든 계층이 같은 효과 통로를 지난다', 'L3 네이티브는 Run마다 격리된 bubblewrap 방에서 실행'],
-      ['경험 저장소', '입력·판단·행동·결과를 연결해 기록한다', '세션·Goal·Run 원장과 체크포인트·영수증이 SQLite 한 곳에 남는다', '두 번째 효과 원장을 만들지 않는다'],
-      ['검증', '모델의 자기평가를 성공 라벨로 쓰지 않는다', '모델의 완료 문구는 unverified, 성공은 호스트의 독립 판정이 정한다', '파일 조건 · 해시 · 원 요청 시험의 실행 영수증'],
-      ['경로 전환', '독립 평가와 그림자 실행 뒤 제한 적용', '후보 → 그림자 → 봉인 평가 → 명시 채택 → 묶음 전체 복귀', '실행·검증 후보는 짝으로만 채택'],
-      ['구조 진화', '모듈 경계와 연결을 변형해 선별한다', '전체 구조 묶음을 admission에 고정하고 원자적으로 교체한다', '큰 구조 탐색은 근거가 쌓일 때까지 보류'],
-      ['첫 실험', '로컬 문서 분류·복사', '통계·문서·코드·후속 업무를 실제 모델과 바닐라 대조군으로 시험', '실패 원본을 보존한 채 다음 버전 설계에 사용'],
-    ];
-    const box = $('pairs');
-    const render = m => {
-      box.dataset.mode = m; box.innerHTML = '';
-      rows.forEach((r, i) => {
-        const p = el('div', 'pair', '', box); p.style.viewTransitionName = 'pair' + i;
-        el('div', 'k', r[0], p);
-        const v = el('div', 'v', '', p); v.textContent = m === 'v2' ? r[1] : r[2];
-        if (m === 'v3') { const s = el('small', '', '', v); s.textContent = r[3]; }
-      });
-    };
-    render('v3');
-    document.querySelectorAll('#shift .toggle button').forEach(b => b.addEventListener('click', () => {
-      const m = b.dataset.mode; if (box.dataset.mode === m) return;
-      document.querySelectorAll('#shift .toggle button').forEach(x => x.setAttribute('aria-pressed', x === b));
-      if (document.startViewTransition && !RM) document.startViewTransition(() => render(m)); else render(m);
-    }));
-  })();
-
   /* ── 02: controller orbit ── */
   (function orbit() {
     const owns = [
-      ['키', '키와 전송', '실제 provider 키와 HTTPS 전송은 호스트에만 있다. 실행 방에는 Run 전용 capability만 전달한다.'],
-      ['예', '예산', '모든 호출 시도는 보내기 전에 원자적으로 차감한다. 오류·취소도 환불하지 않는다.'],
-      ['원', '원장', '세션·Goal·Run과 체크포인트를 SQLite에 기록한다. 모델은 이 기록에 접근하지 못한다.'],
-      ['정', '정지와 만료', '“그만해”와 절대 만료 시각은 모델 응답 뒤에도, 효과 직전에도 다시 확인한다.'],
-      ['효', '효과 통로', '파일 쓰기·실행은 허용된 통로로만 일어나고 의도와 영수증이 남는다.'],
-      ['판', '판정', '성공 여부는 결과를 만든 모델이 아닌 독립 검증이 정한다.'],
+      ['예산', '쓸 수 있는 예산', '모델을 몇 번 부를지 호스트가 미리 정하고 셉니다. 다 쓰면 멈춥니다.'],
+      ['범위', '손댈 수 있는 범위', '모델은 정해진 작업 공간 안에서만 일합니다. 다른 파일이나 외부로는 나가지 못합니다.'],
+      ['판정', '끝났는지의 판단', '모델이 끝났다고 해도 그대로 믿지 않습니다. 결과를 따로 확인한 뒤에 성공으로 기록합니다.'],
     ];
     const list = $('ownlist'), ring = $('orbitRing'), props = $('orbitProps'), mg = $('orbitModels');
     const items = owns.map((o, i) => {
       const d = el('div', 'own rv', '', list); d.style.setProperty('--d', i);
-      el('div', 'ic', o[0], d); const tx = el('div', '', '', d); el('h3', '', o[1], tx); el('p', '', o[2], tx);
-      const a = -Math.PI / 2 + i * Math.PI / 3, x = 260 + 150 * Math.cos(a), y = 260 + 150 * Math.sin(a);
+      el('div', 'ic', o[0].slice(0,1), d); const tx = el('div', '', '', d); el('h3', '', o[1], tx); el('p', '', o[2], tx);
+      const a = -Math.PI / 2 + i * 2 * Math.PI / 3, x = 260 + 150 * Math.cos(a), y = 260 + 150 * Math.sin(a);
       const g = svg('g', {}, ring);
-      const c = svg('circle', { cx: x, cy: y, r: 26, fill: '#101d1a', stroke: '#3a5a50', 'stroke-width': 1.5 }, g);
+      const c = svg('circle', { cx: x, cy: y, r: 32, fill: '#101d1a', stroke: '#3a5a50', 'stroke-width': 1.5 }, g);
       const t = svg('text', { x, y: y + 5, 'text-anchor': 'middle', class: 'svg-title' }, g); t.textContent = o[0];
       return { d, c, x, y };
     });
     if (!CSS.supports('animation-timeline: view()')) items.forEach(it => onView(it.d, () => it.d.classList.add('in')));
-    const models = ['고성능 모델', '저비용 모델', '로컬 모델'].map((name, i) => {
+    const models = ['큰 모델', '작은 모델', '코드'].map((name, i) => {
       const g = svg('g', {}, mg);
       svg('circle', { r: 20, fill: '#2a1d16', stroke: C.l3, 'stroke-width': 1.5 }, g);
       const t = svg('text', { y: 38, 'text-anchor': 'middle', class: 'svg-label' }, g); t.textContent = name;
@@ -237,118 +205,20 @@
     highlight(0); requestAnimationFrame(tick);
   })();
 
-  /* ── 03: sticky journey (scroll-linked packet + lit track) ── */
-  (function journey() {
-    const labels = [['대화', 'ChatService'], ['고정', 'admission'], ['의도 계약', 'intent'], ['계층 선택', 'route · select'], ['격리 실행', 'native · budget'], ['독립 검증', 'acceptance'], ['체크포인트', 'Goal'], ['경험', 'episode']];
-    const pts = labels.map((_, i) => ({ x: i % 2 ? 300 : 160, y: 50 + i * 77 }));
-    let d = `M${pts[0].x} ${pts[0].y}`;
-    for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i], my = (a.y + b.y) / 2; d += ` C${a.x} ${my} ${b.x} ${my} ${b.x} ${b.y}`; }
-    const track = $('jTrack'), lit = $('jLit'), pkt = $('jPacket'), ng = $('jNodes');
-    track.setAttribute('d', d); lit.setAttribute('d', d);
-    const L = track.getTotalLength();
-    // cumulative length at each node
-    const at = pts.map((p, i) => { if (!i) return 0; let lo = 0, hi = L; for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2; track.getPointAtLength(m).y < p.y ? lo = m : hi = m; } return (lo + hi) / 2; });
-    lit.style.strokeDasharray = L; lit.style.strokeDashoffset = L;
-    const nodes = labels.map((lb, i) => {
-      const g = svg('g', { class: 'node' }, ng); const p = pts[i], right = i % 2;
-      svg('circle', { cx: p.x, cy: p.y, r: 22, class: 'node-ring' }, g);
-      const n = svg('text', { x: p.x, y: p.y + 4, 'text-anchor': 'middle', class: 'svg-label' }, g); n.textContent = String(i + 1).padStart(2, '0');
-      const t = svg('text', { x: right ? p.x + 36 : p.x - 36, y: p.y - 2, 'text-anchor': right ? 'start' : 'end', class: 'svg-title' }, g); t.textContent = lb[0];
-      const s = svg('text', { x: right ? p.x + 36 : p.x - 36, y: p.y + 16, 'text-anchor': right ? 'start' : 'end', class: 'svg-label' }, g); s.textContent = lb[1];
-      return g;
-    });
-    const steps = [...document.querySelectorAll('#steps .step')];
-    function update() {
-      const mid = innerHeight * (innerWidth < 960 ? 0.74 : 0.5);
-      const cs = steps.map(s => { const r = s.getBoundingClientRect(); return r.top + r.height / 2; });
-      let idx = 0; for (let i = 0; i < cs.length; i++) if (cs[i] <= mid) idx = i;
-      let frac = 0; if (idx < cs.length - 1) frac = clamp((mid - cs[idx]) / (cs[idx + 1] - cs[idx]), 0, 1);
-      if (cs[0] > mid) frac = 0;
-      const len = idx < at.length - 1 ? at[idx] + (at[idx + 1] - at[idx]) * frac : at[at.length - 1];
-      lit.style.strokeDashoffset = L - len;
-      const p = track.getPointAtLength(len); pkt.setAttribute('cx', p.x); pkt.setAttribute('cy', p.y);
-      const near = frac > 0.5 && idx < steps.length - 1 ? idx + 1 : idx;
-      steps.forEach((s, i) => s.classList.toggle('active', i === near));
-      nodes.forEach((g, i) => { g.classList.toggle('on', i === near); g.classList.toggle('done', i < near); });
-      pkt.setAttribute('fill', LC[3 - Math.min(3, Math.floor(len / L * 4))]);
-    }
-    addEventListener('scroll', () => requestAnimationFrame(update), { passive: true }); update();
-  })();
-
-  /* ── 04: sandbox simulator ── */
-  (function sandbox() {
-    const MAX = 24; let left = MAX, n = 0, touched = false;
-    const log = $('sbLog'), bn = $('budgetN'), bar = $('budgetBar'), agent = $('agentDot');
-    const say = (cls, txt) => { const d = el('div', cls, '', null); d.textContent = txt; log.prepend(d); while (log.children.length > 9) log.lastChild.remove(); };
-    const move = (x, y) => { if (RM) return; agent.animate([{ transform: 'translate(0,0)' }, { transform: `translate(${x}px,${y}px)` }, { transform: 'translate(0,0)' }], { duration: 900, easing: 'cubic-bezier(.2,.8,.2,1)' }); };
-    const flash = id => { const g = $(id); g.animate([{ opacity: .25 }, { opacity: 1 }, { opacity: 1 }, { opacity: .25 }], { duration: 1200 }); };
-    const render = () => { bn.textContent = `${left} / ${MAX}`; bar.style.width = (left / MAX * 100) + '%'; };
-    const acts = {
-      call() {
-        move(0, 80);
-        if (left <= 0) { say('no', '예산 소진 → 새 호출 거절, Goal 정지'); return; }
-        left--; n++; render();
-        const r = Math.random();
-        if (r < .2) say('warn', `#${n} 예약 → 전송 → 오류 · 환불 없음`);
-        else say('ok', `#${n} 예약(선차감) → 전송 → 응답 · 완료 문구는 unverified`);
-      },
-      net() { move(150, -40); flash('netX'); say('no', '차단 · 네트워크 namespace 밖으로 나갈 수 없음'); },
-      peek() { move(-170, -10); flash('peekX'); say('no', '없음 · 이전 Run 디렉터리는 이 방에 마운트되지 않음'); },
-      write() { move(-70, -110); say('ok', '/work/report.md 기록 → 호스트가 해시로 따로 검증'); },
-    };
-    document.querySelectorAll('#sbButtons button').forEach(b => b.addEventListener('click', () => { touched = true; acts[b.dataset.act](); }));
-    render();
-    const seq = ['write', 'call', 'net', 'call', 'peek', 'call']; let k = 0, timer = null;
-    onView($('sandbox'), () => { if (RM || timer) return; timer = setInterval(() => { if (touched) { clearInterval(timer); return; } acts[seq[k++ % seq.length]](); if (left < 6) { left = MAX; render(); } }, 1700); }, { margin: '0px' });
-  })();
-
-  /* ── 05: durable goal crash & resume ── */
-  (function durable() {
-    const box = $('cps'), runner = $('runner'), crash = $('crash');
-    const N = 5, xs = [...Array(N)].map((_, i) => 8 + i * (84 / (N - 1)));
-    const cps = xs.map((x, i) => { const c = el('div', 'cp', `${i + 1}`, box); c.style.left = x + '%'; const l = el('label', '', `단계 ${i + 1}`, c); l.style.left = '-14px'; return c; });
-    const states = [...document.querySelectorAll('#dstate span')];
-    const st = s => states.forEach(x => x.classList.toggle('on', x.dataset.s === s));
-    const wait = ms => new Promise(r => setTimeout(r, ms));
-    const go = async (from, to, ms) => { if (RM) { runner.style.left = xs[to] + '%'; return; } await runner.animate([{ left: xs[from] + '%' }, { left: xs[to] + '%' }], { duration: ms, easing: 'ease-in-out', fill: 'forwards' }).finished; runner.style.left = xs[to] + '%'; };
-    let running = false;
-    async function loop() {
-      if (running) return; running = true;
-      while (true) {
-        cps.forEach(c => c.classList.remove('v')); runner.style.left = xs[0] + '%'; runner.style.opacity = 1; st('running');
-        await wait(500);
-        for (let i = 0; i < 2; i++) { await go(i, i + 1, 900); cps[i].classList.add('v'); }
-        await go(2, 2, 10); await wait(500);
-        crash.classList.remove('show'); void crash.offsetWidth; crash.classList.add('show'); runner.style.opacity = .15; st('lost');
-        await wait(1400); st('recheck');
-        for (let i = 0; i < 2; i++) { cps[i].animate([{ transform: 'scale(1)' }, { transform: 'scale(1.35)' }, { transform: 'scale(1)' }], { duration: 450 }); await wait(500); }
-        st('continue'); runner.style.opacity = 1; await wait(300);
-        for (let i = 2; i < N; i++) { await go(i, Math.min(i + 1, N - 1), 800); cps[i].classList.add('v'); }
-        st('succeeded'); await wait(2600);
-        if (RM) break;
-      }
-    }
-    onView($('durableBox'), loop);
-  })();
-
   /* ── 06: semantic unit matrix scrubber ── */
   (function matrix() {
-    const units = [['interpret', '요청 해석', 90], ['plan_consistency', '계획 정합', 70], ['retrieve', '검색', 45], ['read_knowledge', '지식 읽기', 60], ['route', '경로 선택', 35], ['execute', '실행', 40], ['verify', '검증', 25], ['recover', '복구', 80], ['extract', '경험 추출', 50], ['evaluate', '평가', 95], ['select', '후보 선택', 30]];
+    const units = [['understand', '요청 이해하기', 90], ['find', '자료 찾기', 45], ['act', '작업 실행하기', 30], ['check', '결과 확인하기', 15]];
     const m = $('matrix');
-    ['의미 단위', 'L3 숙고', 'L2 숙련', 'L1 결정', 'L0 실행'].forEach((h, i) => { const d = el('div', 'h', h, m); d.setAttribute('role', 'columnheader'); if (!i) d.style.textAlign = 'left'; });
-    const cells = units.map(u => { const name = el('div', 'u', `${u[1]} <span class="mono small">${u[0]}</span>`, m); name.title = u[0]; name.setAttribute('role', 'rowheader'); return [0, 1, 2, 3].map(k => { const c = el('div', 'c', '', m); c.style.setProperty('--lc', LC[3 - k]); c.setAttribute('role', 'cell'); return c; }); });
-    const costs = [100, 35, 12, 4];
-    const cl = $('costline'); const bars = units.map(() => el('i', '', '', cl));
-    const inp = $('exp'), out = $('expOut');
+    ['판단', '큰 모델', '작은 모델', '선택표', '코드'].forEach((h, i) => { const d = el('div', 'h', h, m); d.setAttribute('role', 'columnheader'); if (!i) d.style.textAlign = 'left'; });
+    const cells = units.map(u => { const name = el('div', 'u', u[1], m); name.setAttribute('role', 'rowheader'); return [0, 1, 2, 3].map(k => { const c = el('div', 'c', '', m); c.style.setProperty('--lc', LC[3 - k]); c.setAttribute('role', 'cell'); return c; }); });
+        const inp = $('exp'), out = $('expOut');
     const level = (e, hard) => { const s = e / Math.max(1, 100 - hard * 0.7); return s < .35 ? 3 : s < .65 ? 2 : s < .95 ? 1 : 0; }; // hard units descend slower; evaluate stays high
     function set(e) {
-      let sum = 0;
       units.forEach((u, i) => {
-        let lv = level(e, u[2]); if (u[0] === 'evaluate' || u[0] === 'interpret') lv = Math.max(lv, 2);
+        let lv = level(e, u[2]); if (u[0] === 'understand') lv = Math.max(lv, 2);
         cells[i].forEach((c, k) => c.classList.toggle('on', k === 3 - lv));
-        bars[i].style.height = (costs[3 - lv]) * 0.6 + 'px'; sum += costs[3 - lv];
       });
-      out.textContent = `${e} · ${e < 15 ? '처음 보는 일' : e < 60 ? '익숙해지는 중' : '숙련된 일'} · 상대 비용 ${Math.round(sum / 11)}`;
+      out.textContent = e < 15 ? '처음 하는 일' : e < 60 ? '익숙해지는 중' : '여러 번 해 본 일';
     }
     let touched = false;
     inp.addEventListener('input', () => { touched = true; set(+inp.value); });
@@ -361,28 +231,26 @@
     });
   })();
 
-  /* ── 07: promotion lifecycle ── */
+  /* ── 04: learn carefully ── */
   (function lifecycle() {
     const g = $('lifeG'), chip = $('lifeChip');
-    const st = [['경험', 'episode', 20], ['후보', '양성 사례 2 · 출처', 175], ['그림자', 'shadow 비교', 330], ['짝 구성', '실행 + 검증', 485], ['봉인 평가', 'sealed final', 640], ['명시 채택', 'adopt', 795], ['활성', 'active bundle', 950]];
-    const W = 130, Y = 70, Hh = 62;
-    const boxes = st.map(s => { const b = svg('g', { class: 'st' }, g); svg('rect', { x: s[2], y: Y, width: W, height: Hh, rx: 12 }, b); const t = svg('text', { x: s[2] + W / 2, y: Y + 28, 'text-anchor': 'middle', class: 'svg-title' }, b); t.textContent = s[0]; const u = svg('text', { x: s[2] + W / 2, y: Y + 47, 'text-anchor': 'middle', class: 'svg-label' }, b); u.textContent = s[1]; return b; });
+    const st = [['경험', '반복된 일의 기록', 30], ['후보', '찾아낸 지름길', 250], ['따로 시험', '실제 일과 분리', 470], ['채택', '다음 일부터 사용', 690]];
+    const W = 180, Y = 50, Hh = 70;
+    const boxes = st.map(s => { const b = svg('g', { class: 'st' }, g); svg('rect', { x: s[2], y: Y, width: W, height: Hh, rx: 14 }, b); const t = svg('text', { x: s[2] + W / 2, y: Y + 32, 'text-anchor': 'middle', class: 'svg-title' }, b); t.textContent = s[0]; const u = svg('text', { x: s[2] + W / 2, y: Y + 52, 'text-anchor': 'middle', class: 'svg-label' }, b); u.textContent = s[1]; return b; });
     for (let i = 1; i < st.length; i++) svg('path', { class: 'ln', d: `M${st[i - 1][2] + W} ${Y + Hh / 2} L${st[i][2] - 4} ${Y + Hh / 2}` }, g);
-    const q = svg('g', { class: 'st' }, g); svg('rect', { x: 330, y: 210, width: 440, height: 54, rx: 12 }, q);
-    const qt = svg('text', { x: 550, y: 242, 'text-anchor': 'middle', class: 'svg-title' }, q); qt.textContent = '격리 · 반례로 기록 · 이전 묶음 유지';
-    svg('path', { class: 'ln ret', d: `M${330 + W / 2} ${Y + Hh} L${330 + W / 2} 206` }, g);
-    svg('path', { class: 'ln ret', d: `M${640 + W / 2} ${Y + Hh} L${640 + W / 2} 206` }, g);
-    svg('path', { class: 'ln ret', d: `M${950 + W / 2} ${Y + Hh} C${950 + W / 2} 240 ${830} 237 ${774} 237` }, g);
-    const rb = svg('text', { x: 1015, y: 196, 'text-anchor': 'middle', class: 'svg-label' }, g); rb.textContent = '회귀 감지 → 묶음 전체 복귀';
+    const q = svg('g', { class: 'st' }, g); svg('rect', { x: 360, y: 180, width: 220, height: 54, rx: 12 }, q);
+    const qt = svg('text', { x: 470, y: 212, 'text-anchor': 'middle', class: 'svg-title' }, q); qt.textContent = '이전 방법 유지 · 되돌림';
+    svg('path', { class: 'ln ret', d: `M${470 + W / 2 - 90} ${Y + Hh} L${470 + W / 2 - 90} 176` }, g);
+    svg('path', { class: 'ln ret', d: `M${690 + W / 2} ${Y + Hh} C${690 + W / 2} 207 640 207 584 207` }, g);
+    const lb = svg('text', { x: 780, y: 170, 'text-anchor': 'middle', class: 'svg-label' }, g); lb.textContent = '문제 발견 시';
     const cx = i => st[i][2] + W / 2, cy = Y + Hh / 2;
     const wait = ms => new Promise(r => setTimeout(r, ms));
-    const moveTo = (x, y, ms = 650) => RM ? (chip.setAttribute('cx', x), chip.setAttribute('cy', y), Promise.resolve()) : new Promise(res => {
+    const moveTo = (x, y, ms = 700) => RM ? (chip.setAttribute('cx', x), chip.setAttribute('cy', y), Promise.resolve()) : new Promise(res => {
       const x0 = +chip.getAttribute('cx') || x, y0 = +chip.getAttribute('cy') || y, t0 = performance.now();
       const f = now => { const u = ease(clamp((now - t0) / ms, 0, 1)); chip.setAttribute('cx', x0 + (x - x0) * u); chip.setAttribute('cy', y0 + (y - y0) * u); u < 1 ? requestAnimationFrame(f) : res(); };
       requestAnimationFrame(f);
     });
-    const mark = (i, cls) => { boxes.forEach(b => b.classList.remove('on')); if (i >= 0) boxes[i].classList.add(cls); };
-    const scripts = [{ fail: 2 }, { fail: -1, rollback: false }, { fail: 4 }, { fail: -1, rollback: true }];
+    const scripts = [{ fail: false }, { fail: true }, { fail: false, back: true }];
     let started = false;
     onView($('lifeSvg'), async () => {
       if (started) return; started = true; let r = 0;
@@ -390,49 +258,34 @@
         const s = scripts[r++ % scripts.length];
         boxes.forEach(b => b.classList.remove('on', 'ok', 'bad')); q.classList.remove('bad');
         chip.setAttribute('fill', C.gold); chip.setAttribute('cx', cx(0)); chip.setAttribute('cy', cy);
+        let failed = false;
         for (let i = 0; i < st.length; i++) {
-          await moveTo(cx(i), cy); mark(i, 'on'); await wait(380);
-          if (i === s.fail) { boxes[i].classList.add('bad'); chip.setAttribute('fill', C.red); await moveTo(cx(i), 237); q.classList.add('bad'); await wait(1300); break; }
-          boxes[i].classList.add('ok');
+          await moveTo(cx(i), cy); boxes[i].classList.add('on'); await wait(450);
+          if (i === 2 && s.fail) { boxes[i].classList.add('bad'); chip.setAttribute('fill', C.red); await moveTo(470, 207); q.classList.add('bad'); await wait(1500); failed = true; break; }
+          boxes[i].classList.remove('on'); boxes[i].classList.add('ok');
         }
-        if (s.fail === -1) {
-          chip.setAttribute('fill', C.mint); await wait(1100);
-          if (s.rollback) { boxes[6].classList.add('bad'); chip.setAttribute('fill', C.red); await moveTo(774, 237, 900); q.classList.add('bad'); await wait(1300); }
+        if (!failed) {
+          chip.setAttribute('fill', C.mint); await wait(1200);
+          if (s.back) { boxes[3].classList.add('bad'); chip.setAttribute('fill', C.red); await moveTo(584, 207, 900); q.classList.add('bad'); await wait(1500); }
         }
         if (RM) break;
-        await wait(500);
+        await wait(600);
       }
     });
   })();
 
-  /* ── 09: timeline + counters ── */
-  (function timeline() {
-    const ev = [
-      ['a1', '10.07', '자연어에서 구조화된 계획으로', '오프라인 문법과 도구 없는 planner로 첫 Run을 만들었다.'],
-      ['a2', '10.07', '불변 계획과 잠금', '계획 상태를 불변 포인터로 고정하고 잠금 전후 스키마를 맞췄다.'],
-      ['a3', '10.07', '실제 모델 연결', '호환 API 워커와 격리 Python 샌드박스, 지식 도구를 붙였다.'],
-      ['a4', '10.08', '끊겨도 이어지는 Goal', '체크포인트와 재시작 검증, 자연어 대화 서비스를 더했다.', 1],
-      ['b1–b3', '10.08', '대화·예약·복구', '중복 억제, 예약 다리, 효과가 불확실한 Run의 정리 경로.'],
-      ['b4', '10.08', '격리된 방', 'bubblewrap 네이티브 실행, 선차감 예산, 모델 없는 예약 실행.', 1],
-      ['b5', '10.08', '학습의 시작', 'Goal 기반 경험에서 L2/L1/L0 후보를 만들고 구조 묶음을 관리한다.', 1],
-      ['b6–b8', '10.09', '의미 단위와 근거', '단위별 추적, 독립 검증기, 의도·근거 계약, 비밀 없는 모델 명세.'],
-      ['b9–b10', '10.09', '첫 실제 비교', '일반 교훈과 11개 의미 단위를 연결했다. 실제 모델 비교의 실패도 그대로 기록했다.'],
-      ['b11–b12', '10.09', '출처 있는 입력', '입력 승인, 공유 예산, 프로젝트 실행 통로와 신뢰된 학습 검증.'],
-      ['b13', '10.10', '의도·실행·학습 연결', '의도부터 실행, 출처가 붙은 학습까지 잇고 첫 32건 실제 시험을 기록했다.', 1],
-      ['b14', '10.10', 'b13 실패 반영', 'b13 시험에서 드러난 빈틈을 고쳤다. 의무 전달, 이전 자료 완독, 실행·검증 짝 학습.', 1],
-      ['b14+', '10.14', '관측 장치', '그림자 예측, 문맥 기록, 사례 검색, 봉인 영수증 재대조.'],
-    ];
-    const tr = $('tlTrack');
-    ev.forEach(e => { const d = el('div', 'ev' + (e[4] ? ' big' : ''), '', tr); el('div', 'vn', `${e[0]} <span class="small">· ${e[1]}</span>`, d); el('h3', '', e[2], d); el('p', '', e[3], d); });
-    const tl = $('tl');
-    // vertical wheel → horizontal when hovering the track (only if it can scroll further)
-    tl.addEventListener('wheel', e => { if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return; const max = tl.scrollWidth - tl.clientWidth; if ((e.deltaY > 0 && tl.scrollLeft < max - 2) || (e.deltaY < 0 && tl.scrollLeft > 2)) { tl.scrollLeft += e.deltaY; e.preventDefault(); } }, { passive: false });
-    document.querySelectorAll('[data-count]').forEach(n => onView(n, () => {
-      const to = +n.dataset.count, t0 = performance.now(), fmt = v => v.toLocaleString('ko-KR');
-      if (RM) { n.textContent = fmt(to); return; }
-      const f = now => { const u = ease(clamp((now - t0) / 1600, 0, 1)); n.textContent = fmt(Math.round(to * u)); if (u < 1) requestAnimationFrame(f); };
-      requestAnimationFrame(f);
-    }));
+  /* ── 01: same request, five times ── */
+  (function lanes() {
+    const flat = [100, 100, 100, 100, 100], reflex = [100, 55, 30, 12, 8];
+    const col = v => v > 70 ? C.l3 : v > 40 ? C.l2 : v > 20 ? C.l1 : C.l0;
+    const tracks = [...document.querySelectorAll('#lanes .lane-track')];
+    const bars = tracks.map(t => (t.dataset.kind === 'flat' ? flat : reflex).map(v => { const c = el('div', 'lane-cell', '', t); const b = el('i', '', '', c); b.style.background = col(v); b.dataset.v = v; return b; }));
+    const play = () => {
+      bars.forEach(row => row.forEach(b => { b.style.transition = 'none'; b.style.width = '0'; }));
+      void document.body.offsetWidth;
+      bars.forEach(row => row.forEach((b, i) => { b.style.transition = RM ? 'none' : `width .9s cubic-bezier(.2,.8,.2,1) ${i * 0.45}s`; b.style.width = b.dataset.v + '%'; }));
+    };
+    onView($('lanes'), play);
   })();
 
   /* ── 10: scoreboard ── */

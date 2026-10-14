@@ -1,8 +1,8 @@
 # REFLEX Agent Concept
 
-최신 공개 문서: [REFLEX v3 — 생각은 처음 한 번, 그다음은 반사로](https://pheanor-agent.github.io/reflex-agent-concept/versions/v3/)
+최신 공개 문서: [REFLEX v3 — 처음엔 생각하고, 익숙해지면 반사로 처리한다](https://pheanor-agent.github.io/reflex-agent-concept/versions/v3/)
 
-- [v3 컨셉 문서](versions/v3/index.html) — v2 구상을 실제 하네스로 옮긴 실험 릴리스(0.3.0b14)의 구조·학습·현재 위치
+- [v3 컨셉 문서](versions/v3/index.html) — 같은 일을 반복할수록 처리가 가벼워지는 에이전트의 구상과 현재 위치
 - [v2 컨셉 문서](versions/v2/index.html) — 행동 학습과 구조 진화
   - [v2 시스템 설계](versions/v2/docs/architecture.md) · [연구 노트](versions/v2/docs/research.md) · [로드맵](versions/v2/docs/roadmap.md)
 - [v1 원본](versions/v1/index.html)
