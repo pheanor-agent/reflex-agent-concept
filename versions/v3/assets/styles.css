@@ -266,3 +266,24 @@ h3{font-size:1.15rem;margin:.2em 0 .4em;line-height:1.4}
 @media(max-width:900px){.road.road3{grid-template-columns:1fr}}
 #idea .matrix{grid-template-columns:140px repeat(4,1fr);max-width:900px}
 @media(max-width:700px){#idea .matrix{grid-template-columns:86px repeat(4,1fr)}}
+
+/* ── scroll scenes ── */
+.dots{display:flex;gap:10px;margin-left:auto}
+.dots a{position:relative;width:34px;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.dots a::after{content:"";position:absolute;inset:0;background:var(--mint);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.dots a.on{background:var(--line-2)}
+@media(max-width:600px){.dots a{width:18px}}
+.scene{position:relative;height:calc(var(--len,4) * 100vh)}
+.stage{position:sticky;top:0;height:100vh;height:100svh;display:grid;grid-template-rows:auto 1fr auto;align-items:center;padding:84px 5vw 7vh;overflow:hidden}
+.scene-kicker{font-family:var(--mono);font-size:.8rem;letter-spacing:.16em;color:var(--dim);text-align:center}
+.scene-kicker b{color:var(--mint);margin-right:8px}
+.vis{width:100%;height:100%;max-width:1200px;max-height:64vh;margin:0 auto;display:block}
+.vt{font-family:var(--sans);font-size:30px;font-weight:700;fill:var(--text)}
+.vl{font-family:var(--sans);font-size:22px;fill:var(--muted)}
+.vs{font-family:var(--sans);font-size:17px;fill:var(--dim)}
+.caps{position:relative;height:4.2em;max-width:1000px;width:100%;margin:0 auto}
+.cap{position:absolute;inset:0;margin:0;display:grid;place-items:center;text-align:center;font-family:var(--serif);font-weight:700;font-size:clamp(1.35rem,3vw,2.5rem);line-height:1.3;letter-spacing:-.01em;opacity:0;transform:translateY(18px);filter:blur(6px);transition:opacity .55s,transform .55s cubic-bezier(.2,.8,.2,1),filter .55s}
+.cap.on{opacity:1;transform:none;filter:none}
+.cap b{color:var(--mint);font-weight:700}
+@media(max-width:700px){.stage{padding:74px 3vw 9vh}.vis{max-height:52vh}.caps{height:5.4em}}
+@media(max-width:700px){.dots{display:none}.ver{margin-left:auto}.vt{font-size:38px}.vl{font-size:29px}.vs{font-size:24px}.vis{max-height:46vh}}
